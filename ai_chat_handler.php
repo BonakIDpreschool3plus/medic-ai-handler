@@ -1,4 +1,15 @@
 <?php
+// CORS headers — MUST be at the very top
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 header('Content-Type: application/json');
 
 // Read the incoming request and extract the user's message
@@ -57,11 +68,9 @@ curl_close($ch);
 // Check if the response is correctly formatted and contains the AI's message
 $responseData = json_decode($response, true);
 
-// If the 'choices' field exists, extract the response
 if (isset($responseData['choices'][0]['text'])) {
     $aiText = $responseData['choices'][0]['text'];
 } else {
-    // If response is unexpected, return a default message
     $aiText = "I'm sorry, I couldn't understand that.";
 }
 
